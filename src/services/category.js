@@ -8,17 +8,20 @@ const onCreateCategory = (name, userId) => {
   return categoryModel.create({ name, userId });
 };
 
-const onGetAllCategorys = () => {
-  return categoryModel.findAll({ attributes: ["id", "name"] });
+const onGetAllCategorys = (filter) => {
+  return categoryModel.findAll({
+    where: { ...filter },
+    attributes: ["id", "name"],
+  });
 };
 
 const onGetCategoryById = (id) => {
   return categoryModel.findOne({ where: { id } });
 };
 
-const onGetCategoryByUserId = (userId) => {
+const onGetCategoryByUserId = (userId, filter) => {
   return categoryModel.findAll({
-    where: { userId },
+    where: { userId, ...filter },
     attributes: ["id", "name"],
   });
 };

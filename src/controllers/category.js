@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
 
 const categoryServices = require("../services/category");
 const referenceCategoryProductServices = require("../services/referenceCategoryProduct");
@@ -46,10 +47,16 @@ const onCreateCategory = async (req, res, next) => {
 };
 
 const onGetAllCategorys = async (req, res, next) => {
+  const { name } = req.query;
+
+  const filter = {};
+
+  filter.name = { [Op.like]: `%${name}%` };
+
   let categorys = [];
 
   try {
-    categorys = await categoryServices.onGetAllCategorys();
+    categorys = await categoryServices.onGetAllCategorys(filter);
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
@@ -59,10 +66,19 @@ const onGetAllCategorys = async (req, res, next) => {
 };
 
 const onGetUserCategorys = async (req, res, next) => {
+  const { name } = req.query;
+
+  const filter = {};
+
+  if (name) filter.name = { [Op.like]: `%${name}%` };
+
   let categorys = [];
 
   try {
-    categorys = await categoryServices.onGetCategoryByUserId(req.user.id);
+    categorys = await categoryServices.onGetCategoryByUserId(
+      req.user.id,
+      filter
+    );
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
@@ -115,7 +131,6 @@ const onUpdateCategory = async (req, res, next) => {
 
 const onDeleteCategory = async (req, res, next) => {
   const { categoryId } = req.params;
-
 
   try {
     const category = await categoryServices.onGetCategoryById(categoryId);
