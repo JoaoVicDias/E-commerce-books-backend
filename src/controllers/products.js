@@ -1,18 +1,30 @@
 const { validationResult } = require("express-validator");
+const { Op } = require("sequelize");
 
 const productServices = require("../services/product");
 const referenceCategoryProductServices = require("../services/referenceCategoryProduct");
 const categoryServices = require("../services/category");
+const queryServices = require("../services/query");
 
 const badDevNoCoffe = require("../errors/badDevNoCoffe");
 const invalidFields = require("../errors/invalidFields");
 const errorWithResponse = require("../errors/errorWithResponse");
 
 const getAllproducts = async (req, res, next) => {
+  const { title, priceLt, priceGt, category } = req.query;
+
+  const filter = {};
+
+  const orderBy = queryServices.treatsOrderBy(req.query.orderBy);
+
+  if (title) filter.title = { [Op.like]: `%${title}%` };
+  if (priceLt) filter.price = { ...filter.price, [Op.lte]: priceLt };
+  if (priceGt) filter.price = { ...filter.price, [Op.gte]: priceGt };
+
   let products = [];
 
   try {
-    products = await productServices.onGetAllProducts();
+    products = await productServices.onGetAllProducts(filter, orderBy);
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
@@ -34,14 +46,33 @@ const getAllproducts = async (req, res, next) => {
     }
   }
 
+  if (category)
+    products = products.filter((product) =>
+      product.categorys.find((categoryParam) => categoryParam.id === category)
+    );
+
   res.status(200).json(products);
 };
 
 const getUserProducts = async (req, res, next) => {
+  const { title, priceLt, priceGt, category } = req.query;
+
+  const filter = {};
+
+  const orderBy = queryServices.treatsOrderBy(req.query.orderBy);
+
+  if (title) filter.title = { [Op.like]: `%${title}%` };
+  if (priceLt) filter.price = { ...filter.price, [Op.lte]: priceLt };
+  if (priceGt) filter.price = { ...filter.price, [Op.gte]: priceGt };
+
   let products = [];
 
   try {
-    products = await productServices.onGetProductsByUserId(req.user.id);
+    products = await productServices.onGetProductsByUserId(
+      req.user.id,
+      filter,
+      orderBy
+    );
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
@@ -63,6 +94,11 @@ const getUserProducts = async (req, res, next) => {
       return next(new badDevNoCoffe());
     }
   }
+
+  if (category)
+    products = products.filter((product) =>
+      product.categorys.find((categoryParam) => categoryParam.id === category)
+    );
 
   res.status(200).json(products);
 };

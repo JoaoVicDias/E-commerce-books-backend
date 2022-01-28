@@ -1,13 +1,18 @@
 const productModel = require("../models/product");
 
-const onGetAllProducts = () => {
-  return productModel.findAll({ attributes: { exclude: ["userId"] }});
+const onGetAllProducts = (filter, orderBy) => {
+  return productModel.findAll({
+    where: { ...filter },
+    attributes: { exclude: ["userId"] },
+    order: orderBy,
+  });
 };
 
-const onGetProductsByUserId = (userId) => {
+const onGetProductsByUserId = (userId, filter, orderBy) => {
   return productModel.findAll({
-    where: { userId },
+    where: { userId, ...filter },
     attributes: { exclude: ["userId"] },
+    order: orderBy,
   });
 };
 
