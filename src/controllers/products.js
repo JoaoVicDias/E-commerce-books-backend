@@ -11,27 +11,36 @@ const invalidFields = require("../errors/invalidFields");
 const errorWithResponse = require("../errors/errorWithResponse");
 
 const getAllproducts = async (req, res, next) => {
-  const { title, priceLt, priceGt, category } = req.query;
+  const { title, priceLt, priceGt, category, orderBy, offset, limit } =
+    req.query;
 
   const filter = {};
+  const pagination = queryServices.treatesPagination(offset, limit);
 
-  const orderBy = queryServices.treatsOrderBy(req.query.orderBy);
+  const orderByFilter = queryServices.treatsOrderBy(orderBy);
 
   if (title) filter.title = { [Op.like]: `%${title}%` };
   if (priceLt) filter.price = { ...filter.price, [Op.lte]: priceLt };
   if (priceGt) filter.price = { ...filter.price, [Op.gte]: priceGt };
 
   let products = [];
+  let count = 0;
 
   try {
-    products = await productServices.onGetAllProducts(filter, orderBy);
+    const response = await productServices.onGetAllProducts(
+      filter,
+      orderByFilter,
+      pagination
+    );
+    products = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
   }
 
-  for (let count = 0; count < products.length; count++) {
-    const productId = products[count].id;
+  for (let loopCount = 0; loopCount < products.length; loopCount++) {
+    const productId = products[loopCount].id;
 
     let categorys = [];
 
@@ -39,7 +48,7 @@ const getAllproducts = async (req, res, next) => {
       categorys = await categoryServices.onGetAllCategorysFromOneProduct(
         productId
       );
-      products[count] = { ...products[count].dataValues, categorys };
+      products[loopCount] = { ...products[loopCount].dataValues, categorys };
     } catch (error) {
       console.error(error);
       return next(new badDevNoCoffe());
@@ -51,42 +60,47 @@ const getAllproducts = async (req, res, next) => {
       product.categorys.find((categoryParam) => categoryParam.id === category)
     );
 
-  res.status(200).json(products);
+  res.status(200).json({ results: products, count });
 };
 
 const getUserProducts = async (req, res, next) => {
-  const { title, priceLt, priceGt, category } = req.query;
+  const { title, priceLt, priceGt, category, orderBy, offset, limit } =
+    req.query;
 
   const filter = {};
-
-  const orderBy = queryServices.treatsOrderBy(req.query.orderBy);
+  const pagination = queryServices.treatesPagination(offset, limit);
+  const orderByFilter = queryServices.treatsOrderBy(orderBy);
 
   if (title) filter.title = { [Op.like]: `%${title}%` };
   if (priceLt) filter.price = { ...filter.price, [Op.lte]: priceLt };
   if (priceGt) filter.price = { ...filter.price, [Op.gte]: priceGt };
 
   let products = [];
+  let count = 0;
 
   try {
-    products = await productServices.onGetProductsByUserId(
+    const response = await productServices.onGetProductsByUserId(
       req.user.id,
       filter,
-      orderBy
+      orderByFilter,
+      pagination
     );
+    products = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
   }
 
-  for (let count = 0; count < products.length; count++) {
-    const productId = products[count].id;
+  for (let loopCount = 0; loopCount < products.length; loopCount++) {
+    const productId = products[loopCount].id;
 
     try {
       const productsCategorys =
         await categoryServices.onGetAllCategorysFromOneProduct(productId);
 
-      products[count] = {
-        ...products[count].dataValues,
+      products[loopCount] = {
+        ...products[loopCount].dataValues,
         categorys: productsCategorys,
       };
     } catch (error) {
@@ -100,7 +114,7 @@ const getUserProducts = async (req, res, next) => {
       product.categorys.find((categoryParam) => categoryParam.id === category)
     );
 
-  res.status(200).json(products);
+  res.status(200).json({ results: products, count });
 };
 
 const getProduct = async (req, res, next) => {

@@ -3,6 +3,7 @@ const { Op } = require("sequelize");
 
 const categoryServices = require("../services/category");
 const referenceCategoryProductServices = require("../services/referenceCategoryProduct");
+const queryServices = require("../services/query");
 
 const invalidFields = require("../errors/invalidFields");
 const badDevNoCoffe = require("../errors/badDevNoCoffe");
@@ -47,44 +48,55 @@ const onCreateCategory = async (req, res, next) => {
 };
 
 const onGetAllCategorys = async (req, res, next) => {
-  const { name } = req.query;
+  const { name, offset, limit } = req.query;
 
   const filter = {};
+  const pagination = queryServices.treatesPagination(offset, limit);
 
-  filter.name = { [Op.like]: `%${name}%` };
+  if (name) filter.name = { [Op.like]: `%${name}%` };
 
   let categorys = [];
+  let count = 0;
 
   try {
-    categorys = await categoryServices.onGetAllCategorys(filter);
+    const response = await categoryServices.onGetAllCategorys(
+      filter,
+      pagination
+    );
+
+    categorys = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
   }
 
-  res.json(categorys);
+  res.json({ count, results: categorys });
 };
 
 const onGetUserCategorys = async (req, res, next) => {
-  const { name } = req.query;
+  const { name, offset, limit } = req.query;
 
   const filter = {};
+  const pagination = queryServices.treatesPagination(offset, limit);
 
   if (name) filter.name = { [Op.like]: `%${name}%` };
 
   let categorys = [];
+  let count = 0;
 
   try {
     categorys = await categoryServices.onGetCategoryByUserId(
       req.user.id,
-      filter
+      filter,
+      pagination
     );
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
   }
 
-  res.json(categorys);
+  res.json({ results: categorys, count });
 };
 
 const onUpdateCategory = async (req, res, next) => {

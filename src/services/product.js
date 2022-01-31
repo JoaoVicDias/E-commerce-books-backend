@@ -1,18 +1,22 @@
 const productModel = require("../models/product");
 
-const onGetAllProducts = (filter, orderBy) => {
-  return productModel.findAll({
+const onGetAllProducts = (filter, orderBy, pagination) => {
+  return productModel.findAndCountAll({
     where: { ...filter },
     attributes: { exclude: ["userId"] },
     order: orderBy,
+    offset: pagination.offset,
+    limit: pagination.limit,
   });
 };
 
-const onGetProductsByUserId = (userId, filter, orderBy) => {
-  return productModel.findAll({
+const onGetProductsByUserId = (userId, filter, orderBy, pagination) => {
+  return productModel.findAndCountAll({
     where: { userId, ...filter },
     attributes: { exclude: ["userId"] },
     order: orderBy,
+    offset: pagination.offset,
+    limit: pagination.limit,
   });
 };
 

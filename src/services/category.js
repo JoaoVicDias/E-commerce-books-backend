@@ -8,10 +8,12 @@ const onCreateCategory = (name, userId) => {
   return categoryModel.create({ name, userId });
 };
 
-const onGetAllCategorys = (filter) => {
-  return categoryModel.findAll({
+const onGetAllCategorys = (filter, pagination) => {
+  return categoryModel.findAndCountAll({
     where: { ...filter },
     attributes: ["id", "name"],
+    offset: pagination.offset,
+    limit: pagination.limit,
   });
 };
 
@@ -19,10 +21,12 @@ const onGetCategoryById = (id) => {
   return categoryModel.findOne({ where: { id } });
 };
 
-const onGetCategoryByUserId = (userId, filter) => {
-  return categoryModel.findAll({
+const onGetCategoryByUserId = (userId, filter, pagination) => {
+  return categoryModel.findAndCountAll({
     where: { userId, ...filter },
     attributes: ["id", "name"],
+    offset: pagination.offset,
+    limit: pagination.limit,
   });
 };
 
