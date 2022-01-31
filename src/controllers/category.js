@@ -86,11 +86,14 @@ const onGetUserCategorys = async (req, res, next) => {
   let count = 0;
 
   try {
-    categorys = await categoryServices.onGetCategoryByUserId(
+    const response = await categoryServices.onGetCategoryByUserId(
       req.user.id,
       filter,
       pagination
     );
+
+    categorys = response.rows
+    count = response.count
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
