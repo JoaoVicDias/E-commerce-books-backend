@@ -1,5 +1,5 @@
 const treatsOrderBy = (orderByArrayJson) => {
-  if(!orderByArrayJson) return []
+  if (!orderByArrayJson) return []
   return JSON.parse(orderByArrayJson).map((order) => order.split(" "));
 };
 
