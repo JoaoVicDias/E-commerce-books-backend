@@ -34,4 +34,4 @@ app.use(routes);
 app.use(errorHandler);
 app.use(notFoundHandler);
 
-app.listen(process.env.port || 5000, console.log("Server started!"));
+app.listen(process.env.PORT || 5000, console.log("Server started!"));
