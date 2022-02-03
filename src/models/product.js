@@ -3,6 +3,7 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("./dataBase");
 const userModel = require("./user");
 const referenceCategoryProductModel = require("./referenceCategoryProduct");
+const referenceCheckoutProducts = require("./referenceCheckoutProducts");
 
 const product = sequelize.define("Product", {
   id: {
@@ -39,5 +40,6 @@ const product = sequelize.define("Product", {
 
 product.belongsTo(userModel, { foreignKey: "userId" });
 product.hasMany(referenceCategoryProductModel, { foreignKey: "productId" });
+product.hasMany(referenceCheckoutProducts, { foreignKey: "productId" });
 
 module.exports = product;

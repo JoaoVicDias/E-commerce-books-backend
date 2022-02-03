@@ -13,14 +13,6 @@ const onCreateCategory = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) return next(new invalidFields());
 
-  if (!req.user.isAdmin)
-    return next(
-      new errorWithResponse(
-        "Apenas usuario administrador pode criar categoria",
-        403
-      )
-    );
-
   const { name } = req.body;
 
   try {
@@ -92,8 +84,8 @@ const onGetUserCategorys = async (req, res, next) => {
       pagination
     );
 
-    categorys = response.rows
-    count = response.count
+    categorys = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());

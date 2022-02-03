@@ -4,6 +4,7 @@ const { check } = require("express-validator");
 const productControllers = require("../controllers/products");
 
 const verifyToken = require("../middlewares/verifyToken");
+const verifyIsAdmin = require("../middlewares/verifyIsAdmin");
 
 const routes = express.Router();
 
@@ -14,6 +15,7 @@ routes.get("/browser/:productId", productControllers.getProduct);
 routes.post(
   "/",
   verifyToken,
+  verifyIsAdmin,
   [
     check("img").notEmpty(),
     check("title").trim().notEmpty(),

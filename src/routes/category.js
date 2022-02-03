@@ -2,6 +2,7 @@ const express = require("express");
 const { check } = require("express-validator");
 
 const verifyToken = require("../middlewares/verifyToken");
+const verifyIsAdmin = require("../middlewares/verifyIsAdmin");
 
 const categoryControllers = require("../controllers/category");
 
@@ -13,6 +14,7 @@ routes.get("/all", categoryControllers.onGetAllCategorys);
 routes.post(
   "/",
   verifyToken,
+  verifyIsAdmin,
   check("name").trim().not().isEmpty(),
   categoryControllers.onCreateCategory
 );

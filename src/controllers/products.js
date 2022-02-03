@@ -151,9 +151,6 @@ const createProduct = async (req, res, next) => {
   const erros = validationResult(req);
   if (!erros.isEmpty()) return next(new invalidFields());
 
-  if (!req.user.isAdmin)
-    return next(new errorWithResponse("Você não pode criar um produto!", 403));
-
   const { img, title, description, amount, price, categorys } = req.body;
 
   let createdProduct;
