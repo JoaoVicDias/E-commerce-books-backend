@@ -6,7 +6,7 @@ const badDevNoCoffe = require("../errors/badDevNoCoffe");
 
 const getAllReferencesFromCheckouts = async (checkouts) => {
   if (!Array.isArray(checkouts)) {
-    return referenceCheckoutProducts.findOne({ where: { id: checkouts.id } });
+    throw new badDevNoCoffe();
   }
 
   let checkoutList = checkouts;
@@ -72,4 +72,8 @@ const createReference = async (products, checkoutId) => {
   }
 };
 
-module.exports = { getAllReferencesFromCheckouts, createReference };
+const deleteReference = (checkoutId) => {
+  return referenceCheckoutProducts.destroy({ where: { checkoutId } });
+};
+
+module.exports = { getAllReferencesFromCheckouts, createReference, deleteReference };

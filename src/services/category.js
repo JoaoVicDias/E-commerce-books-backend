@@ -73,6 +73,26 @@ const onGetAllCategorysFromOneProduct = async (productId) => {
   return categorys;
 };
 
+const getCategorysFromEachProductList = async (productList) => {
+  const products = productList;
+
+  for (let loopCount = 0; loopCount < products.length; loopCount++) {
+    const productId = products[loopCount].id;
+
+    let categorys = [];
+
+    try {
+      categorys = await onGetAllCategorysFromOneProduct(productId);
+      products[loopCount] = { ...products[loopCount].dataValues, categorys };
+    } catch (error) {
+      console.error(error);
+      return next(new badDevNoCoffe());
+    }
+  }
+
+  return products;
+};
+
 module.exports = {
   onCreateCategory,
   onGetAllCategorys,
@@ -82,4 +102,5 @@ module.exports = {
   onUpdateCategory,
   onDeleteCategory,
   onGetAllCategorysFromOneProduct,
+  getCategorysFromEachProductList,
 };

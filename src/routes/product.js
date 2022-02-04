@@ -5,6 +5,7 @@ const productControllers = require("../controllers/products");
 
 const verifyToken = require("../middlewares/verifyToken");
 const verifyIsAdmin = require("../middlewares/verifyIsAdmin");
+const fileUpload = require("../middlewares/fileUpload");
 
 const routes = express.Router();
 
@@ -16,8 +17,8 @@ routes.post(
   "/",
   verifyToken,
   verifyIsAdmin,
+  fileUpload.single("img"),
   [
-    check("img").notEmpty(),
     check("title").trim().notEmpty(),
     check("description").trim().notEmpty(),
     check("price").trim().notEmpty().isNumeric(),

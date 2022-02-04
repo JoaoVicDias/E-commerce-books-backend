@@ -4,8 +4,9 @@ const getUserByEmail = (email) => {
   return userModel.findOne({ where: { email } });
 };
 
-const createUser = (name, email, cpf, password, isAdmin) => {
+const createUser = (img, name, email, cpf, password, isAdmin) => {
   return userModel.create({
+    img,
     name,
     email,
     cpf,

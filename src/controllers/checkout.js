@@ -148,6 +148,13 @@ const deleteCheckout = async (req, res, next) => {
     return next(new badDevNoCoffe());
   }
 
+  try {
+    await referenceCheckoutProductsServices.deleteReference(checkoutId);
+  } catch (error) {
+    console.error(error);
+    return next(new badDevNoCoffe());
+  }
+
   res.json({ message: "Checkout deletado com sucesso!" });
 };
 

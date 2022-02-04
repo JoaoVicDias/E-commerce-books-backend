@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const path = require("path");
 
 const errorHandler = require("./middlewares/errorHandler");
 const notFoundHandler = require("./middlewares/notFoundHandler");
@@ -12,6 +13,7 @@ const routes = require("./routes/index");
 const app = express();
 
 app.use(express.json());
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 app.use(
   cors({
     origin: "*",

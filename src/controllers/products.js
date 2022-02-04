@@ -1,5 +1,7 @@
 const { validationResult } = require("express-validator");
 const { Op } = require("sequelize");
+const fs = require("fs");
+require("dotenv").config();
 
 const productServices = require("../services/product");
 const referenceCategoryProductServices = require("../services/referenceCategoryProduct");
@@ -39,20 +41,11 @@ const getAllproducts = async (req, res, next) => {
     return next(new badDevNoCoffe());
   }
 
-  for (let loopCount = 0; loopCount < products.length; loopCount++) {
-    const productId = products[loopCount].id;
-
-    let categorys = [];
-
-    try {
-      categorys = await categoryServices.onGetAllCategorysFromOneProduct(
-        productId
-      );
-      products[loopCount] = { ...products[loopCount].dataValues, categorys };
-    } catch (error) {
-      console.error(error);
-      return next(new badDevNoCoffe());
-    }
+  try {
+    products = await categoryServices.getCategorysFromEachProductList(products);
+  } catch (error) {
+    console.error(error);
+    return next(new badDevNoCoffe());
   }
 
   if (category)
@@ -92,21 +85,11 @@ const getUserProducts = async (req, res, next) => {
     return next(new badDevNoCoffe());
   }
 
-  for (let loopCount = 0; loopCount < products.length; loopCount++) {
-    const productId = products[loopCount].id;
-
-    try {
-      const productsCategorys =
-        await categoryServices.onGetAllCategorysFromOneProduct(productId);
-
-      products[loopCount] = {
-        ...products[loopCount].dataValues,
-        categorys: productsCategorys,
-      };
-    } catch (error) {
-      console.error(error);
-      return next(new badDevNoCoffe());
-    }
+  try {
+    products = await categoryServices.getCategorysFromEachProductList(products);
+  } catch (error) {
+    console.error(error);
+    return next(new badDevNoCoffe());
   }
 
   if (category)
@@ -151,13 +134,13 @@ const createProduct = async (req, res, next) => {
   const erros = validationResult(req);
   if (!erros.isEmpty()) return next(new invalidFields());
 
-  const { img, title, description, amount, price, categorys } = req.body;
+  const { title, description, amount, price, categorys } = req.body;
 
   let createdProduct;
 
   try {
     createdProduct = await productServices.onCreateProduct({
-      img,
+      img: req.file.path,
       title,
       description,
       amount,
@@ -248,8 +231,9 @@ const updateProduct = async (req, res, next) => {
 const deleteProduct = async (req, res, next) => {
   const { productId } = req.params;
 
+  let existingProduct;
   try {
-    const existingProduct = await productServices.onGetProductById(productId);
+    existingProduct = await productServices.onGetProductById(productId);
     if (!existingProduct)
       return next(new errorWithResponse("Esse produto não existe!", 404));
 
@@ -277,6 +261,10 @@ const deleteProduct = async (req, res, next) => {
     console.error(error);
     return next(new badDevNoCoffe());
   }
+
+  fs.unlink(existingProduct.img, (err) => {
+    console.error(err);
+  });
 
   res.status(200).json({ message: "Produto deletado com sucesso!" });
 };

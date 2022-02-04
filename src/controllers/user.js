@@ -64,6 +64,7 @@ const signUpController = async (req, res, next) => {
   let createdUser;
   try {
     createdUser = await userServices.createUser(
+      req.file.path,
       name,
       email,
       cpf,
