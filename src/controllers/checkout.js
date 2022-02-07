@@ -19,22 +19,11 @@ const getAllCategorys = async (req, res, next) => {
   let count = 0;
 
   try {
-    const response = await checkoutServices.getAllCheckouts(
+    checkouts = await checkoutServices.getAllCheckouts(
       pagination,
       treatedOrderBy
     );
-    checkouts = response.rows;
-    count = response.count;
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  try {
-    checkouts =
-      await referenceCheckoutProductsServices.getAllReferencesFromCheckouts(
-        checkouts
-      );
+    count = checkouts.length;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
@@ -53,23 +42,12 @@ const getAllUserCategory = async (req, res, next) => {
   let count = 0;
 
   try {
-    const response = await checkoutServices.getAllUserCheckouts(
+    checkouts = await checkoutServices.getAllUserCheckouts(
       pagination,
       treatedOrderBy,
       req.user.id
     );
-    checkouts = response.rows;
-    count = response.count;
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  try {
-    checkouts =
-      await referenceCheckoutProductsServices.getAllReferencesFromCheckouts(
-        checkouts
-      );
+    count = checkouts.length;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());

@@ -32,10 +32,10 @@ routes.patch(
   "/:productId",
   verifyToken,
   [
-    check("title").trim().notEmpty(),
-    check("description").trim().notEmpty(),
-    check("price").trim().notEmpty().isNumeric(),
-    check("amount").trim().notEmpty().isNumeric(),
+    check("title").trim().notEmpty().optional(),
+    check("description").trim().notEmpty().optional(),
+    check("price").trim().notEmpty().optional().isNumeric(),
+    check("amount").trim().notEmpty().optional().isNumeric(),
   ],
   productControllers.updateProduct
 );

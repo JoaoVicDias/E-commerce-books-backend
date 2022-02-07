@@ -15,13 +15,13 @@ routes.post(
   "/",
   verifyToken,
   verifyIsAdmin,
-  check("name").trim().not().isEmpty(),
+  check("name").trim().notEmpty(),
   categoryControllers.onCreateCategory
 );
 
 routes.patch(
   "/:categoryId",
-  check("name").trim().not().isEmpty(),
+  check("name").trim().notEmpty(),
   verifyToken,
   categoryControllers.onUpdateCategory
 );

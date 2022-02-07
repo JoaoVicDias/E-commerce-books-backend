@@ -1,7 +1,5 @@
 const { DataTypes } = require("sequelize");
 
-const referenceCheckoutProducts = require('./referenceCheckoutProducts')
-
 const sequelize = require("./dataBase");
 
 const checkout = sequelize.define("Checkout", {
@@ -20,7 +18,5 @@ const checkout = sequelize.define("Checkout", {
     allowNull: false,
   }
 });
-
-checkout.hasMany(referenceCheckoutProducts, { foreignKey: "checkoutId" });
 
 module.exports = checkout;

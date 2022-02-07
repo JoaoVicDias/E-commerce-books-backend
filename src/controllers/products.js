@@ -29,29 +29,25 @@ const getAllproducts = async (req, res, next) => {
   let count = 0;
 
   try {
-    const response = await productServices.onGetAllProducts(
+    products = await productServices.onGetAllProducts(
       filter,
       orderByFilter,
       pagination
     );
-    products = response.rows;
-    count = response.count;
+    count = products.length;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
   }
 
-  try {
-    products = await categoryServices.getCategorysFromEachProductList(products);
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  if (category)
+  if (category) {
     products = products.filter((product) =>
-      product.categorys.find((categoryParam) => categoryParam.id === category)
+      product.categorys.find(
+        (categoryParam) => categoryParam.Category.id === category
+      )
     );
+    count = products.length;
+  }
 
   res.status(200).json({ results: products, count });
 };
@@ -72,30 +68,26 @@ const getUserProducts = async (req, res, next) => {
   let count = 0;
 
   try {
-    const response = await productServices.onGetProductsByUserId(
+    products = await productServices.onGetProductsByUserId(
       req.user.id,
       filter,
       orderByFilter,
       pagination
     );
-    products = response.rows;
-    count = response.count;
+    count = products.length;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
   }
 
-  try {
-    products = await categoryServices.getCategorysFromEachProductList(products);
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  if (category)
+  if (category) {
     products = products.filter((product) =>
-      product.categorys.find((categoryParam) => categoryParam.id === category)
+      product.categorys.find(
+        (categoryParam) => categoryParam.Category.id === category
+      )
     );
+    count = products.length;
+  }
 
   res.status(200).json({ results: products, count });
 };
@@ -114,20 +106,7 @@ const getProduct = async (req, res, next) => {
     return next(new badDevNoCoffe());
   }
 
-  let productsCategorys = [];
-
-  try {
-    productsCategorys = await categoryServices.onGetAllCategorysFromOneProduct(
-      productId
-    );
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  res
-    .status(200)
-    .json({ ...existingProduct.dataValues, categorys: productsCategorys });
+  res.status(200).json(existingProduct);
 };
 
 const createProduct = async (req, res, next) => {
@@ -162,10 +141,10 @@ const createProduct = async (req, res, next) => {
     return next(new badDevNoCoffe());
   }
 
-  let productCategorys = [];
+  let productJustCreated;
 
   try {
-    productCategorys = await categoryServices.onGetAllCategorysFromOneProduct(
+    productJustCreated = await productServices.onGetProductById(
       createdProduct.id
     );
   } catch (error) {
@@ -173,9 +152,7 @@ const createProduct = async (req, res, next) => {
     return next(new badDevNoCoffe());
   }
 
-  res
-    .status(201)
-    .json({ ...createdProduct.dataValues, categorys: productCategorys });
+  res.status(201).json(productJustCreated);
 };
 
 const updateProduct = async (req, res, next) => {
@@ -214,18 +191,7 @@ const updateProduct = async (req, res, next) => {
     return next(new badDevNoCoffe());
   }
 
-  let categorys = [];
-
-  try {
-    categorys = await categoryServices.onGetAllCategorysFromOneProduct(
-      productId
-    );
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  res.status(200).json({ ...updatedProduct.dataValues, categorys });
+  res.status(200).json(updatedProduct);
 };
 
 const deleteProduct = async (req, res, next) => {

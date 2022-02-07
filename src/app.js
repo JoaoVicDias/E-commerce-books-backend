@@ -7,6 +7,7 @@ const errorHandler = require("./middlewares/errorHandler");
 const notFoundHandler = require("./middlewares/notFoundHandler");
 
 const dataBase = require("./models/dataBase");
+const relations = require("./models/relations");
 
 const routes = require("./routes/index");
 
@@ -27,6 +28,7 @@ dataBase
   .authenticate()
   .then(() => {
     dataBase.sync();
+    relations();
     console.log("Successfully connected to the database!");
   })
   .catch((error) => console.log(error));

@@ -1,19 +1,37 @@
 const checkoutModel = require("../models/checkout");
+const referenceCheckoutProductsModel = require("../models/referenceCheckoutProducts");
+const productModel = require("../models/product");
 
 const getAllCheckouts = (pagination, orderBy) => {
-  return checkoutModel.findAndCountAll({
+  return checkoutModel.findAll({
     offset: pagination.offset,
     limit: pagination.limit,
     order: orderBy,
+    include: [
+      {
+        model: referenceCheckoutProductsModel,
+        foreignKey: "checkoutId",
+        as: "products",
+        include: [{ model: productModel, foreignKey: "productId" }],
+      },
+    ],
   });
 };
 
 const getAllUserCheckouts = (pagination, orderBy, userId) => {
-  return checkoutModel.findAndCountAll({
+  return checkoutModel.findAll({
     where: { userId },
     offset: pagination.offset,
     limit: pagination.limit,
     order: orderBy,
+    include: [
+      {
+        model: referenceCheckoutProductsModel,
+        foreignKey: "checkoutId",
+        as: "products",
+        include: [{ model: productModel, foreignKey: "productId" }],
+      },
+    ],
   });
 };
 
