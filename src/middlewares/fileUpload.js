@@ -2,9 +2,9 @@ const multer = require("multer");
 const uuid = require("uuid");
 
 const mime_type_map = {
-  "img/png": "png",
-  "img/jpeg": "jpeg",
-  "img/jpg": "jpg",
+  "image/png": "png",
+  "image/jpeg": "jpeg",
+  "image/jpg": "jpg",
 };
 
 const fileUpload = multer({

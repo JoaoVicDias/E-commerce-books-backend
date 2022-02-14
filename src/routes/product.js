@@ -17,7 +17,7 @@ routes.post(
   "/",
   verifyToken,
   verifyIsAdmin,
-  fileUpload.single("img"),
+  fileUpload.single("image"),
   [
     check("title").trim().notEmpty(),
     check("description").trim().notEmpty(),
