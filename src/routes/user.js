@@ -9,7 +9,7 @@ const routes = express.Router();
 
 routes.post(
   "/sign-up",
-  fileUpload.single("img"),
+  fileUpload.single("image"),
   [
     check("name").trim().not().isEmpty(),
     check("email").normalizeEmail().isEmail(),
