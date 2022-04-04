@@ -4,8 +4,8 @@ const productModel = require("../models/product");
 const categoryModel = require("../models/category");
 const referenceCategoryProductModel = require("../models/referenceCategoryProduct");
 
-const onGetAllProducts = (filter, orderBy, pagination) => {
-  return productModel.findAll({
+const onGetAllProducts = (filter, orderBy, pagination, categoryFilter) => {
+  return productModel.findAndCountAll({
     where: { ...filter },
     order: orderBy,
     offset: pagination.offset,
@@ -15,6 +15,7 @@ const onGetAllProducts = (filter, orderBy, pagination) => {
         model: referenceCategoryProductModel,
         foreignKey: "productId",
         as: "categorys",
+        where: { ...categoryFilter },
         include: [
           {
             model: categoryModel,
@@ -26,8 +27,14 @@ const onGetAllProducts = (filter, orderBy, pagination) => {
   });
 };
 
-const onGetProductsByUserId = (userId, filter, orderBy, pagination) => {
-  return productModel.findAll({
+const onGetProductsByUserId = (
+  userId,
+  filter,
+  orderBy,
+  pagination,
+  categoryFilter
+) => {
+  return productModel.findAndCountAll({
     where: { userId, ...filter },
     attributes: { exclude: ["userId"] },
     order: orderBy,
@@ -38,6 +45,7 @@ const onGetProductsByUserId = (userId, filter, orderBy, pagination) => {
         model: referenceCategoryProductModel,
         foreignKey: "productId",
         as: "categorys",
+        where: { ...categoryFilter },
         include: [
           {
             model: categoryModel,

@@ -21,9 +21,9 @@ routes.post(
   [
     check("title").trim().notEmpty(),
     check("description").trim().notEmpty(),
-    check("price").trim().notEmpty().isNumeric(),
+    check("price").trim().notEmpty().isFloat({ locale: 'pt-BR'}),
     check("amount").trim().notEmpty().isNumeric(),
-    check("categorys").isArray().notEmpty(),
+    check("categorys").notEmpty(),
   ],
   productControllers.createProduct
 );

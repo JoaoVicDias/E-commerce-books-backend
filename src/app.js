@@ -14,7 +14,14 @@ const routes = require("./routes/index");
 const app = express();
 
 app.use(express.json());
-app.use("/uploads/images", express.static(path.join("uploads", "images")));
+
+app.use(
+  "/src/uploads/images",
+  express.static(path.join("src", "uploads", "images"))
+);
+
+app.use(helmet({ crossOriginIsolated: false }));
+
 app.use(
   cors({
     origin: "*",
@@ -22,7 +29,7 @@ app.use(
     methods: ["GET", "POST", "PATCH", "DELETE"],
   })
 );
-app.use(helmet());
+
 
 dataBase
   .authenticate()

@@ -40,21 +40,11 @@ const onCreateCategory = async (req, res, next) => {
 };
 
 const onGetAllCategorys = async (req, res, next) => {
-  const { name, offset, limit } = req.query;
-
-  const filter = {};
-  const pagination = queryServices.treatesPagination(offset, limit);
-
-  if (name) filter.name = { [Op.like]: `%${name}%` };
-
   let categorys = [];
   let count = 0;
 
   try {
-    const response = await categoryServices.onGetAllCategorys(
-      filter,
-      pagination
-    );
+    const response = await categoryServices.onGetAllCategorys();
 
     categorys = response.rows;
     count = response.count;

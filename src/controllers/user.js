@@ -132,6 +132,7 @@ const signInController = async (req, res, next) => {
       name: existingUser.name,
       cpf: existingUser.cpf,
       isAdmin: existingUser.isAdmin,
+      img: existingUser.img
     });
   } catch (error) {
     console.error(error);

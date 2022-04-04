@@ -4,12 +4,9 @@ const onCreateCategory = (name, userId) => {
   return categoryModel.create({ name, userId });
 };
 
-const onGetAllCategorys = (filter, pagination) => {
+const onGetAllCategorys = () => {
   return categoryModel.findAndCountAll({
-    where: { ...filter },
     attributes: ["id", "name"],
-    offset: pagination.offset,
-    limit: pagination.limit,
   });
 };
 

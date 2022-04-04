@@ -5,7 +5,6 @@ require("dotenv").config();
 
 const productServices = require("../services/product");
 const referenceCategoryProductServices = require("../services/referenceCategoryProduct");
-const categoryServices = require("../services/category");
 const queryServices = require("../services/query");
 
 const badDevNoCoffe = require("../errors/badDevNoCoffe");
@@ -17,36 +16,30 @@ const getAllproducts = async (req, res, next) => {
     req.query;
 
   const filter = {};
+  const categoryFilter = {};
   const pagination = queryServices.treatesPagination(offset, limit);
-
   const orderByFilter = queryServices.treatsOrderBy(orderBy);
 
   if (title) filter.title = { [Op.like]: `%${title}%` };
   if (priceLt) filter.price = { ...filter.price, [Op.lte]: priceLt };
   if (priceGt) filter.price = { ...filter.price, [Op.gte]: priceGt };
+  if (category) categoryFilter.categoryId = category;
 
   let products = [];
   let count = 0;
 
   try {
-    products = await productServices.onGetAllProducts(
+    const response = await productServices.onGetAllProducts(
       filter,
       orderByFilter,
-      pagination
+      pagination,
+      categoryFilter
     );
-    count = products.length;
+    products = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
-  }
-
-  if (category) {
-    products = products.filter((product) =>
-      product.categorys.find(
-        (categoryParam) => categoryParam.Category.id === category
-      )
-    );
-    count = products.length;
   }
 
   res.status(200).json({ results: products, count });
@@ -57,36 +50,32 @@ const getUserProducts = async (req, res, next) => {
     req.query;
 
   const filter = {};
+  const categoryFilter = {};
+
   const pagination = queryServices.treatesPagination(offset, limit);
   const orderByFilter = queryServices.treatsOrderBy(orderBy);
 
   if (title) filter.title = { [Op.like]: `%${title}%` };
   if (priceLt) filter.price = { ...filter.price, [Op.lte]: priceLt };
   if (priceGt) filter.price = { ...filter.price, [Op.gte]: priceGt };
+  if (category) categoryFilter.categoryId = category;
 
   let products = [];
   let count = 0;
 
   try {
-    products = await productServices.onGetProductsByUserId(
+    const response = await productServices.onGetProductsByUserId(
       req.user.id,
       filter,
       orderByFilter,
-      pagination
+      pagination,
+      categoryFilter
     );
-    count = products.length;
+    products = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
-  }
-
-  if (category) {
-    products = products.filter((product) =>
-      product.categorys.find(
-        (categoryParam) => categoryParam.Category.id === category
-      )
-    );
-    count = products.length;
   }
 
   res.status(200).json({ results: products, count });
@@ -110,6 +99,7 @@ const getProduct = async (req, res, next) => {
 };
 
 const createProduct = async (req, res, next) => {
+  console.log(req.body);
   const erros = validationResult(req);
   if (!erros.isEmpty()) return next(new invalidFields());
 
@@ -123,7 +113,7 @@ const createProduct = async (req, res, next) => {
       title,
       description,
       amount,
-      price,
+      price: parseFloat(price),
       userId: req.user.id,
     });
   } catch (error) {
