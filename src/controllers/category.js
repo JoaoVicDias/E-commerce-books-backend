@@ -126,47 +126,9 @@ const onUpdateCategory = async (req, res, next) => {
   res.status(200).json(editedCategory);
 };
 
-const onDeleteCategory = async (req, res, next) => {
-  const { categoryId } = req.params;
-
-  try {
-    const category = await categoryServices.onGetCategoryById(categoryId);
-
-    if (!category)
-      return next(new errorWithResponse("Categoria não existe!", 404));
-
-    if (req.user.id !== category.userId)
-      return next(
-        new errorWithResponse("Você não pode deletar esta categoria!", 403)
-      );
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  try {
-    await categoryServices.onDeleteCategory(categoryId);
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  try {
-    await referenceCategoryProductServices.onDeleteReferenceByCategoryId(
-      categoryId
-    );
-  } catch (error) {
-    console.error(error);
-    return next(new badDevNoCoffe());
-  }
-
-  res.status(200).json({ message: "Deletado com sucesso!" });
-};
-
 module.exports = {
   onCreateCategory,
   onGetAllCategorys,
   onGetUserCategorys,
   onUpdateCategory,
-  onDeleteCategory,
 };

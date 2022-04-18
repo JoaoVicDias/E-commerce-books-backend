@@ -9,7 +9,7 @@ const badDevNoCoffe = require("../errors/badDevNoCoffe");
 const invalidFiels = require("../errors/invalidFields");
 const errorWithResponse = require("../errors/errorWithResponse");
 
-const getAllCategorys = async (req, res, next) => {
+const getAllCheckouts = async (req, res, next) => {
   const { offset, limit, orderBy } = req.query;
 
   const pagination = queryServices.treatesPagination(offset, limit);
@@ -19,11 +19,12 @@ const getAllCategorys = async (req, res, next) => {
   let count = 0;
 
   try {
-    checkouts = await checkoutServices.getAllCheckouts(
+    const response = await checkoutServices.getAllCheckouts(
       pagination,
       treatedOrderBy
     );
-    count = checkouts.length;
+    checkouts = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
@@ -32,7 +33,7 @@ const getAllCategorys = async (req, res, next) => {
   res.json({ results: checkouts, count });
 };
 
-const getAllUserCategory = async (req, res, next) => {
+const getAllUserCheckout = async (req, res, next) => {
   const { offset, limit, orderBy } = req.query;
 
   const pagination = queryServices.treatesPagination(offset, limit);
@@ -42,12 +43,13 @@ const getAllUserCategory = async (req, res, next) => {
   let count = 0;
 
   try {
-    checkouts = await checkoutServices.getAllUserCheckouts(
+    const response = await checkoutServices.getAllUserCheckouts(
       pagination,
       treatedOrderBy,
       req.user.id
     );
-    count = checkouts.length;
+    checkouts = response.rows;
+    count = response.count;
   } catch (error) {
     console.error(error);
     return next(new badDevNoCoffe());
@@ -137,8 +139,8 @@ const deleteCheckout = async (req, res, next) => {
 };
 
 module.exports = {
-  getAllCategorys,
-  getAllUserCategory,
+  getAllCheckouts,
+  getAllUserCheckout,
   createCheckout,
   deleteCheckout,
 };

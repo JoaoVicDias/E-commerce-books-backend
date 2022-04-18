@@ -33,10 +33,6 @@ const onUpdateCategory = (categoryInformations, categoryId) => {
   });
 };
 
-const onDeleteCategory = (categoryId) => {
-  return categoryModel.destroy({ where: { id: categoryId } });
-};
-
 module.exports = {
   onCreateCategory,
   onGetAllCategorys,
@@ -44,5 +40,4 @@ module.exports = {
   onGetCategoryByUserId,
   onGetCategoryByName,
   onUpdateCategory,
-  onDeleteCategory,
 };

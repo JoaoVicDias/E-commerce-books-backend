@@ -98,6 +98,14 @@ const getProductsfromCheckoutByIds = async (products) => {
       if (product.amount <= 0)
         throw new errorWithResponse("Esse produto esta esgotado!", 422);
 
+      if (product.amount < productsList[count].amount)
+        throw new errorWithResponse(
+          product.amount > 1
+            ? `Só existem ${product.amount} unidades!`
+            : `Só existe ${product.amount} unidade!`,
+          422
+        );
+
       productsList[count] = { ...productsList[count], price: product.price };
 
       await onUpdateProduct(

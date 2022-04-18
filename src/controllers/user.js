@@ -69,7 +69,7 @@ const signUpController = async (req, res, next) => {
       email,
       cpf,
       hashedPassword,
-      isAdmin
+      isAdmin,
     );
   } catch (error) {
     console.error(error);
@@ -85,6 +85,7 @@ const signUpController = async (req, res, next) => {
       email,
       cpf,
       isAdmin: isAdmin || false,
+      img: createdUser.img
     });
   } catch (error) {
     console.error(error);

@@ -8,12 +8,12 @@ const checkoutControllers = require("../controllers/checkout");
 
 const router = express.Router();
 
-router.get("/", verifyToken, checkoutControllers.getAllUserCategory);
+router.get("/", verifyToken, checkoutControllers.getAllUserCheckout);
 router.get(
   "/all",
   verifyToken,
   verifyIsAdmin,
-  checkoutControllers.getAllCategorys
+  checkoutControllers.getAllCheckouts
 );
 
 router.post(

@@ -3,10 +3,11 @@ const referenceCheckoutProductsModel = require("../models/referenceCheckoutProdu
 const productModel = require("../models/product");
 
 const getAllCheckouts = (pagination, orderBy) => {
-  return checkoutModel.findAll({
+  return checkoutModel.findAndCountAll({
     offset: pagination.offset,
     limit: pagination.limit,
     order: orderBy,
+    distinct: true,
     include: [
       {
         model: referenceCheckoutProductsModel,
@@ -19,11 +20,12 @@ const getAllCheckouts = (pagination, orderBy) => {
 };
 
 const getAllUserCheckouts = (pagination, orderBy, userId) => {
-  return checkoutModel.findAll({
+  return checkoutModel.findAndCountAll({
     where: { userId },
+    order: orderBy,
     offset: pagination.offset,
     limit: pagination.limit,
-    order: orderBy,
+    distinct: true,
     include: [
       {
         model: referenceCheckoutProductsModel,

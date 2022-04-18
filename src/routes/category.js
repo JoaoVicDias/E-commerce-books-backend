@@ -26,10 +26,4 @@ routes.patch(
   categoryControllers.onUpdateCategory
 );
 
-routes.delete(
-  "/:categoryId",
-  verifyToken,
-  categoryControllers.onDeleteCategory
-);
-
 module.exports = routes;
